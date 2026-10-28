@@ -74,7 +74,6 @@ public class Result
     {
         return Failure(Error.Exception);
     }
-
 }
 
 /// <summary>
