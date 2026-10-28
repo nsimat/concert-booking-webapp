@@ -5,7 +5,7 @@ namespace ConcertBooking.WebApp.Domain.Common;
 /// creation and modification details. It is intended to be inherited by other entity
 /// classes where audit tracking is required.
 /// </summary>
-public class AuditableEntity
+public abstract class AuditableEntity : BaseEntity   
 {
     /// <summary>
     /// Gets or sets the unique identifier of the user or entity responsible for creating the record.
@@ -17,7 +17,7 @@ public class AuditableEntity
     /// Gets or sets the date and time at which the record was created.
     /// This property is typically set during the initialization of the entity.
     /// </summary>
-    public DateTime CreatedAt { get; set; }
+    public DateTimeOffset CreatedAt { get; set; }
 
     /// <summary>
     /// Gets or sets the unique identifier of the user or entity responsible for the most recent modification of the record.
@@ -29,5 +29,5 @@ public class AuditableEntity
     /// Gets or sets the date and time when the record was last modified.
     /// This property is updated whenever any modification is made to the entity.
     /// </summary>
-    public DateTime? LastModifiedAt { get; set; }    
+    public DateTimeOffset? LastModifiedAt { get; set; }    
 }
