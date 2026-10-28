@@ -8,28 +8,15 @@ namespace ConcertBooking.WebApp.Domain.Entities;
 // A Venue: (1) ------> (*)(Concert)
 // An Artist: (1) ------> (*)(Concert)
 // A Concert: (1) -----> (*)(Booking)
-public class Concert : AuditableEntity
+public class Concert : AuditableEntity // Event
 {
-    [Key]
-    public Guid Id { get; set; }
-    public required string Name { get; set; } = string.Empty;
+    public required string Title { get; set; } = string.Empty;// Name
     public string? Description { get; set; } = string.Empty;
     public string? ImageUrl { get; set; } = string.Empty;
+    public ConcertStatus Status { get; set; }
     
     [Required]
     public DateTime DateTime { get; set; }
-    
-    //public ConcertType Type { get; set; }
-
-    //à vérifier la pertinence
-    //public int TotalCapacity { get; set; }
-    //public int AvailableSeats { get; set; }
-    //public decimal TicketPrice { get; set; }
-
-    // Concurrency: prevent the overbooking (optimistic Concurrency)
-    //[Timestamp]
-    //public byte[] RowVersion { get; set; } = Array.Empty<byte>();// à vérifier
-    // fin à vérifier
     
     // Navigation
     [Required]
@@ -45,3 +32,4 @@ public class Concert : AuditableEntity
 
     public ICollection<Booking> Bookings { get; set; } = new HashSet<Booking>();
 }
+// Rôle métier/ Job role: define the event, its date, and its status. It links the artist to the venue and manages the global availability logic (e.g., determining if the concert is sold out). It also manages the concert status (scheduled, postponed, sold out, canceled).
