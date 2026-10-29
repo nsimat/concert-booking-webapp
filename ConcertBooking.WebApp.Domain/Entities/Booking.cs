@@ -31,18 +31,8 @@ public class Booking : AuditableEntity
     public decimal TotalPrice => Tickets.Sum(t => t.Price);
 
     public decimal TotalPriceWithTaxes => TotalPrice * 1.2m;
-
-    private Booking() { } // For Entity Framework
-
-    public Booking(Guid customerId, Guid concertId)
-    {
-        ApplicationUserId = customerId;
-        ConcertId = concertId;
-        BookingDate = DateTime.UtcNow;
-        Status = BookingStatus.Pending;
-    }
     
-    public void AddTicket(string seatNumber, decimal price)
+    public void AddTicket(string seatNumber, decimal price) //à revoir!!!
     {
         if(Status == BookingStatus.Pending)
             throw new InvalidOperationException("Cannot add ticket to a booking that is not pending.");
@@ -60,7 +50,7 @@ public class Booking : AuditableEntity
         Tickets.Add(ticket);
     }
     
-    public void ConfirmPayment()
+    public void ConfirmPayment() //à revoir!!!
     {
         if (Status == BookingStatus.Expired)
             throw new InvalidOperationException("The booking time has expired. Impossible to pay it.");
@@ -79,7 +69,7 @@ public class Booking : AuditableEntity
         }
     }
     
-    public void Cancel()//à revoir
+    public void Cancel()//à revoir!!!
     {
         if(Status != BookingStatus.Pending)
             throw new InvalidOperationException("Cannot cancel a booking that is not pending.");
