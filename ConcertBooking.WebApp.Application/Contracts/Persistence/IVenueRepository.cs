@@ -4,5 +4,4 @@ namespace ConcertBooking.WebApp.Application.Contracts.Persistence;
 
 public interface IVenueRepository : IAsyncRepository<Venue>
 {
-    
 }
