@@ -7,7 +7,7 @@ namespace ConcertBooking.WebApp.Domain.Entities;
 // One artist: (1) -----> (*): Concerts
 public class Artist: AuditableEntity
 {
-    public required string StageName { get; set; } = string.Empty;
+    public string StageName { get; set; } = string.Empty;
     public string? Bio { get; set; }
     public MusicalStyle MusicalStyle { get; set; }
     public string? ImageUrl { get; set; }
