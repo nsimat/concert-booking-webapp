@@ -10,4 +10,25 @@
       <ProjectReference Include="..\ConcertBooking.WebApp.Domain\ConcertBooking.WebApp.Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="AutoMapper" Version="16.2.0" />
+      <PackageReference Include="FluentValidation" Version="12.2.0" />
+      <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.2.0" />
+      <PackageReference Include="MediatR" Version="14.2.0" />
+      <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.14" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Features\Artists\Commands\" />
+      <Folder Include="Features\Artists\Queries\GetArtistsList\" />
+      <Folder Include="Features\Concerts\Commands\" />
+      <Folder Include="Features\Concerts\Queries\" />
+      <Folder Include="Features\Identity\RefreshToken\" />
+      <Folder Include="Features\Identity\Register\" />
+      <Folder Include="Features\Tickets\Commands\" />
+      <Folder Include="Features\Tickets\Queries\" />
+      <Folder Include="Features\Venues\Commands\" />
+      <Folder Include="Features\Venues\Queries\" />
+    </ItemGroup>
+
 </Project>
