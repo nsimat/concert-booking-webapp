@@ -14,19 +14,9 @@ public class Concert : AuditableEntity // Event
     public string? Description { get; set; } = string.Empty;
     public string? ImageUrl { get; set; } = string.Empty;
     public ConcertStatus Status { get; set; }
-    
-    [Required]
-    public DateTime DateTime { get; set; }
-    
-    // Navigation
-    [Required]
-    [ForeignKey("VenueId")]
+    public DateTimeOffset DateTime { get; set; }
     public Guid VenueId { get; set; } // working as a foreign key
     public virtual Venue Venue { get; set; } = null!;
-    
-    // Navigation
-    [Required]
-    [ForeignKey("ArtistId")]
     public Guid ArtistId { get; set; } // working as a foreign key
     public virtual Artist Artist { get; set; } = null!;
 
