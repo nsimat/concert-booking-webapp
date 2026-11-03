@@ -11,7 +11,6 @@ public class Artist: AuditableEntity
     public string? Bio { get; set; }
     public MusicalStyle MusicalStyle { get; set; }
     public string? ImageUrl { get; set; }
-
     public virtual ICollection<Concert> Concerts { get; set; } = new HashSet<Concert>();// or =[] to avoid null.
 }
 //Rôle métier: Enables categorization, user search, and schedule management.
