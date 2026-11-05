@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using AutoMapper;
+using ConcertBooking.WebApp.Application.Common;
 using ConcertBooking.WebApp.Application.Contracts.Persistence;
 using ConcertBooking.WebApp.Domain.Common;
 using ConcertBooking.WebApp.Domain.Entities;

@@ -1,3 +1,4 @@
+using ConcertBooking.WebApp.Application.Common;
 using ConcertBooking.WebApp.Domain.Common;
 using ConcertBooking.WebApp.Domain.Enums;
 using MediatR;
