@@ -1,4 +1,4 @@
-namespace ConcertBooking.WebApp.Domain.Common;
+namespace ConcertBooking.WebApp.Application.Common;
 
 /// <summary>
 /// Represents a paginated result set.
@@ -11,10 +11,10 @@ namespace ConcertBooking.WebApp.Domain.Common;
 public sealed class PagedResult<TResult>(List<TResult> items, int totalCount, int page, int pageSize)
 {
     public List<TResult> Items { get; } = items;
-    public int TotalCount { get; } = totalCount;
-    public int Page { get; } = page;
-    public int PageSize { get; } = pageSize;
-    public int TotalPages => (int)Math.Ceiling((double)TotalCount / PageSize);
+    private int TotalCount { get; } = totalCount;
+    private int Page { get; } = page;
+    private int PageSize { get; } = pageSize;
+    private int TotalPages => (int)Math.Ceiling((double)TotalCount / PageSize);
     public bool HasNextPage => Page < TotalPages;
     public bool HasPreviousPage => Page > 1;
 }

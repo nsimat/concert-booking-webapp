@@ -1,4 +1,6 @@
-namespace ConcertBooking.WebApp.Domain.Common;
+using ConcertBooking.WebApp.Domain.Common;
+
+namespace ConcertBooking.WebApp.Application.Common;
 
 /// <summary>
 /// Represents the result of an operation, encapsulating both success and failure outcomes.
