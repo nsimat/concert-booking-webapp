@@ -23,6 +23,8 @@
       <Folder Include="Features\Artists\Queries\GetArtistsList\" />
       <Folder Include="Features\Concerts\Commands\" />
       <Folder Include="Features\Concerts\Queries\" />
+      <Folder Include="Features\Customers\Commands\" />
+      <Folder Include="Features\Customers\Queries\" />
       <Folder Include="Features\Identity\RefreshToken\" />
       <Folder Include="Features\Identity\Register\" />
       <Folder Include="Features\Tickets\Commands\" />
