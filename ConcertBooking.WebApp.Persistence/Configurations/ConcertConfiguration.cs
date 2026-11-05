@@ -9,11 +9,18 @@ public class ConcertConfiguration : IEntityTypeConfiguration<Concert>
     public void Configure(EntityTypeBuilder<Concert> entity)
     {
         entity.HasKey(c => c.Id);
-        entity.Property(c => c.Title).IsRequired().HasMaxLength(100);
-        entity.Property(c => c.Description).HasMaxLength(200);
-        entity.Property(c => c.ImageUrl).HasMaxLength(200);
-        entity.Property(c => c.Status).HasConversion<string>().IsRequired();
-        entity.Property(c => c.DateTime).IsRequired();
+        entity.Property(c => c.Title)
+            .IsRequired()
+            .HasMaxLength(100);
+        entity.Property(c => c.Description)
+            .HasMaxLength(200);
+        entity.Property(c => c.ImageUrl)
+            .HasMaxLength(200);
+        entity.Property(c => c.Status)
+            .HasConversion<string>()
+            .IsRequired();
+        entity.Property(c => c.DateTime)
+            .IsRequired();
 
         entity.HasOne(c => c.Venue)
             .WithMany(v => v.Concerts)
@@ -28,6 +35,11 @@ public class ConcertConfiguration : IEntityTypeConfiguration<Concert>
         entity.HasMany(c => c.Bookings)
             .WithOne(b => b.Concert)
             .HasForeignKey(b => b.ConcertId)
+            .OnDelete(DeleteBehavior.Cascade);
+        
+        entity.HasMany(c => c.Tickets)
+            .WithOne(t => t.Concert)
+            .HasForeignKey(t => t.ConcertId)
             .OnDelete(DeleteBehavior.Cascade);
         
         // insert seed data with HasData()
