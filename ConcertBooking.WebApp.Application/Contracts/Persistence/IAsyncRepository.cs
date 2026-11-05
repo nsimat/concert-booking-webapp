@@ -6,9 +6,9 @@ namespace ConcertBooking.WebApp.Application.Contracts.Persistence;
 /// <typeparam name="T">The type of the entity managed by the repository. Must be a class.</typeparam>
 public interface IAsyncRepository<T> where T : class
 {
-    Task<T?> GetByIdAsync(Guid id);
-    Task<IReadOnlyList<T>> GetAllAsync();
-    Task<T> AddAsync(T entity);
-    Task UpdateAsync(T entity);
-    Task DeleteAsync(T entity);
+    Task<T?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<T>> GetAllAsync(CancellationToken cancellationToken = default);
+    Task<T> AddAsync(T entity, CancellationToken cancellationToken = default);
+    Task<T> UpdateAsync(T entity, CancellationToken cancellationToken = default);
+    Task DeleteAsync(T entity, CancellationToken cancellationToken = default);
 }
