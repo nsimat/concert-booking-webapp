@@ -8,12 +8,13 @@ namespace ConcertBooking.WebApp.Domain.Entities;
 // Booking: (1) -----> (*): Ticket
 public class Booking : AuditableEntity
 {
-    public DateTime BookingDate { get; set; }
-    public BookingStatus Status { get; set; }
     public Guid ConcertId { get; set; }
     public virtual Concert Concert { get; set; } = null!;
-    public Guid ApplicationUserId { get; set; }
-    public virtual ApplicationUser ApplicationUser { get; set; } = null!;
+    public Guid CustomerId { get; set; }
+    public virtual Customer Customer { get; set; } = null!;
+    public DateTimeOffset BookedAt { get; set; }
+    public BookingStatus Status { get; set; }
+    public int SeatsReserved { get; set; }
     
     public virtual ICollection<Ticket> Tickets { get; set; } = new HashSet<Ticket>();
     
@@ -28,7 +29,7 @@ public class Booking : AuditableEntity
             throw new InvalidOperationException("Cannot add ticket to a booking that is not pending.");
         
         string uniqueTicketNumber = 
-            $"TCK-{ApplicationUserId.ToString()[..8].ToUpper()}-{ConcertId.ToString()[..8].ToUpper()}-{seatNumber}";
+            $"TCK-{CustomerId.ToString()[..8].ToUpper()}-{ConcertId.ToString()[..8].ToUpper()}-{seatNumber}";
         var ticket = new Ticket()
         {
             ConcertId = this.ConcertId,

@@ -9,17 +9,20 @@ public class BookingConfiguration : IEntityTypeConfiguration<Booking>
     public void Configure(EntityTypeBuilder<Booking> entity)
     {
         entity.HasKey(b => b.Id);
-        entity.Property(b => b.BookingDate).IsRequired();
-        entity.Property(b => b.Status).HasConversion<string>().IsRequired();
+        entity.Property(b => b.BookedAt)
+            .IsRequired();
+        entity.Property(b => b.Status)
+            .HasConversion<string>()
+            .IsRequired();
         
         entity.HasOne(b => b.Concert)
             .WithMany(b => b.Bookings)
             .HasForeignKey(b => b.ConcertId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        entity.HasOne(b => b.ApplicationUser)
+        entity.HasOne(b => b.Customer)
             .WithMany(a => a.Bookings)
-            .HasForeignKey(b => b.ApplicationUserId)
+            .HasForeignKey(b => b.CustomerId)
             .OnDelete(DeleteBehavior.Cascade);
 
         entity.HasMany(b => b.Tickets)
