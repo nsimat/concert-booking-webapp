@@ -18,6 +18,7 @@ public sealed record Error(string Code, string Message, ErrorType Type = ErrorTy
     public static Error Conflict(string code, string message) => new(code, message, ErrorType.Conflict);
     public static Error Failure(string code, string message) => new(code, message, ErrorType.Failure);
     public static Error Forbidden(string code, string message) => new(code, message, ErrorType.Forbidden);
+    // others to implement
 }
 
 public enum ErrorType
@@ -26,5 +27,8 @@ public enum ErrorType
     Validation,
     NotFound,
     Conflict,
-    Forbidden
+    Unauthorized,
+    PaymentRequired,  
+    Forbidden,
+    InternalServerError
 }
