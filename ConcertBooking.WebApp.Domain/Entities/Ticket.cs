@@ -8,16 +8,16 @@ namespace ConcertBooking.WebApp.Domain.Entities;
 // Ticket: (1) -----> (1): ApplicationUser
 public class Ticket : AuditableEntity
 {
-    public required string TicketNumber { get; set; } // Unique QR Code
-    public required string SeatNumber { get; set; } // Null si fosse / placement libre -> inncorect.
+    public string TicketNumber { get; set; } = string.Empty; // Unique QR Code
+    public string SeatNumber { get; set; } = string.Empty;
     public decimal Price { get; set; }
     public bool IsScanned { get; set; }
     public Guid BookingId { get; set; }
     public virtual Booking? Booking { get; set; }
     public Guid ConcertId { get; set; }
     public virtual Concert? Concert { get; set; }
-    public Guid ApplicationUserId { get; set; } // Le User connecté qui a acheté le ticket. Il est important de noter que l'ApplicationUserId est une clé étrangère qui relie le ticket à l'utilisateur spécifique qui l'a acheté. Cela permet de suivre quel utilisateur possède quel ticket, facilitant ainsi la gestion des accès et des droits d'entrée pour les événements.
-    public virtual ApplicationUser? ApplicationUser { get; set; }
+    public Guid CustomerId { get; set; } 
+    public virtual Customer? Customer { get; set; }
     
     // Business Core Logic
     public void Scan()// à revoir!!!
