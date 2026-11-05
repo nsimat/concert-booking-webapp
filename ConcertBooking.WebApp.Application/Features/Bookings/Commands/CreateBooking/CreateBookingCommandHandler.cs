@@ -53,7 +53,6 @@ public class CreateBookingCommandHandler : IRequestHandler<CreateBookingCommand,
         {
             // A failed notification should not stop the API from doing its work, so we log the exception and move on.
             Console.WriteLine(e);
-            //throw;
         }
         
         return Result<Guid>.Success(booking.Id);
