@@ -16,6 +16,7 @@ public static class PersistenceServiceRegistration
             options.UseSqlServer(configuration.GetConnectionString("ConcertBookingManagementConnectionString")));
         
         services.AddScoped(typeof(IAsyncRepository<>), typeof(BaseRepository<>));
+        
         services.AddScoped<IArtistRepository, ArtistRepository>();
         services.AddScoped<IBookingRepository, BookingRepository>();
         services.AddScoped<IConcertRepository, ConcertRepository>();
