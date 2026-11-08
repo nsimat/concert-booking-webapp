@@ -5,10 +5,8 @@ using MediatR;
 
 namespace ConcertBooking.WebApp.Application.Features.Bookings.Commands.CreateBooking;
 
-public class CreateBookingCommand : IRequest<Result<Guid>>
+public sealed class CreateBookingCommand : IRequest<Result<Guid>>
 {
-    public DateTime BookingDate { get; set; }
-    public BookingStatus Status { get; set; }
-    public Guid ConcertId { get; set; }
-    public Guid ApplicationUserId { get; set; }
+    public Guid ConcertId { get; init; }
+    //public Guid CustomerId { get; set; }
 }

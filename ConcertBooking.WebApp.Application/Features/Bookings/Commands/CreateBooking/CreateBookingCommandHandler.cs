@@ -1,60 +1,84 @@
-using System.ComponentModel.DataAnnotations;
 using AutoMapper;
 using ConcertBooking.WebApp.Application.Common;
+using ConcertBooking.WebApp.Application.Contracts.Infrastructure.Identity;
 using ConcertBooking.WebApp.Application.Contracts.Infrastructure.Messaging;
 using ConcertBooking.WebApp.Application.Contracts.Persistence;
+using ConcertBooking.WebApp.Application.Features.Bookings.BookingErrorsCatalog;
 using ConcertBooking.WebApp.Application.Models.Mail;
 using ConcertBooking.WebApp.Domain.Common;
 using ConcertBooking.WebApp.Domain.Entities;
+using ConcertBooking.WebApp.Domain.Enums;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace ConcertBooking.WebApp.Application.Features.Bookings.Commands.CreateBooking;
 
-public class CreateBookingCommandHandler : IRequestHandler<CreateBookingCommand, Result<Guid>>
+public sealed class CreateBookingCommandHandler(
+    IBookingRepository bookingRepository,
+    IConcertRepository concertRepository,
+    ICustomerRepository customerRepository,
+    ICurrentUser currentUser,
+    IEmailService emailService,
+    TimeProvider timeProvider,
+    ILogger<CreateBookingCommandHandler> logger)
+    : IRequestHandler<CreateBookingCommand, Result<Guid>>
 {
-    private readonly IBookingRepository _bookingRepository;
-    private readonly IMapper _mapper;
-    private readonly IEmailService _emailService;
-
-    public CreateBookingCommandHandler(
-        IBookingRepository bookingRepository, 
-        IMapper mapper,
-        IEmailService emailService)
-    {
-        _bookingRepository = bookingRepository ?? throw new ArgumentNullException(nameof(bookingRepository));
-        _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-        _emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
-    }
-    
     public async Task<Result<Guid>> Handle(CreateBookingCommand request, CancellationToken cancellationToken)
     {
-        var validator = new CreateBookingCommandValidator(_bookingRepository);
-        var validatorResult = await validator.ValidateAsync(request, cancellationToken);
+        // Input validation (ConcertId not empty) has already been done by ValidationBehavior.
         
-        if (validatorResult.Errors.Count > 0)
-            throw new Exceptions.ValidationException(validatorResult);
+        // 1. Check if the current user is authenticated
+        if (!currentUser.IsAuthenticated || !Guid.TryParse(currentUser.UserId, out var applicationUserId))
+            return BookingErrors.NotAuthenticated;
+        
+        var customer = await customerRepository.GetByApplicationUserIdAsync(applicationUserId, cancellationToken);
+        if (customer is null)
+            return BookingErrors.CustomerNotFound;
+        
+        // 2. Check the Business rules: Ensure the concert exists and is not in the past
+        var concert = await concertRepository.GetByIdAsync(request.ConcertId, cancellationToken);
+        if (concert is null)
+            return BookingErrors.ConcertNotFound(request.ConcertId);
+        
+        var now = timeProvider.GetUtcNow();
+        if (concert.DateTime <= now)
+            return BookingErrors.ConcertAlreadyTookPlace(concert.Id);
 
-        var booking = _mapper.Map<Booking>(request);
-        booking = await _bookingRepository.AddAsync(booking, cancellationToken);
-
-        var email = new Email()
+        // 3. Persistence: create a new booking and save it to the database
+        var booking = new Booking
         {
-            To = "customer@own.mail", // The email of the connected customer
-            Subject = "A new booking was created.",
-            Body = $"A new booking was created: {request}"
+            ConcertId = request.ConcertId,
+            CustomerId = customer.Id,
+            BookedAt = now,
+            Status = BookingStatus.Pending
+        };
+        
+        booking = await bookingRepository.AddAsync(booking, cancellationToken);
+        
+        // 4. Notification (using the principe of best effort: an email failuremust not fail the booking creation)
+        await NotifyCustomerAsync(customer, booking, cancellationToken);
+        
+        // 5. Success: return the ID of the newly created booking
+        return booking.Id;
+    }
+    
+    private async Task NotifyCustomerAsync(Customer customer, Booking booking, CancellationToken cancellationToken)
+    {
+        var email = new Email
+        {
+            To = customer.Email,
+            Subject = "Your booking has been created",
+            Body = $"Your booking {booking.Id} was created on {booking.BookedAt:f}. " +
+                   "It will be confirmed once payment has been received."
         };
 
         try
         {
-            await _emailService.SendEmailAsync(email, cancellationToken);
-
+            await emailService.SendEmailAsync(email, cancellationToken);
         }
-        catch (Exception e)
+        catch (Exception exception) when (exception is not OperationCanceledException)
         {
-            // A failed notification should not stop the API from doing its work, so we log the exception and move on.
-            Console.WriteLine(e);
+            logger.LogWarning(exception, "Failed to send booking creation email for booking {BookingId}", booking.Id);
         }
-        
-        return Result<Guid>.Success(booking.Id);
     }
 }
