@@ -1,6 +1,5 @@
 using AutoMapper;
 using ConcertBooking.WebApp.Application.DTOs;
-using ConcertBooking.WebApp.Application.Features.Bookings.Commands.CreateBooking;
 using ConcertBooking.WebApp.Application.Features.Bookings.Commands.UpdateBooking;
 using ConcertBooking.WebApp.Application.Features.Bookings.Queries.GetBookingDetails;
 using ConcertBooking.WebApp.Application.Features.Bookings.Queries.GetBookingsList;
@@ -14,10 +13,9 @@ public class MappingProfile : Profile
     {
         CreateMap<Booking, BookingDetailVm>().ReverseMap();
         CreateMap<Concert, ConcertDto>().ReverseMap();
-        CreateMap<ApplicationUser, UserDto>().ReverseMap();
-        CreateMap<Booking, BookingListlVm>().ReverseMap();
+        CreateMap<Customer, UserDto>().ReverseMap();
+        CreateMap<Booking, BookingListVm>().ReverseMap();
 
-        CreateMap<Booking, CreateBookingCommand>().ReverseMap();
         CreateMap<Booking, UpdateBookingCommand>().ReverseMap();
     }
 }
