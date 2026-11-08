@@ -16,6 +16,7 @@ public class Concert : AuditableEntity // Event
     public string? ImageUrl { get; set; } = string.Empty;
     public ConcertStatus Status { get; set; }
     public DateTimeOffset DateTime { get; set; }
+    public int AvailableSeats { get; set; } // Number of available seats for the concert. Une règle « places disponibles » doit-elle venir ici?
     public Guid VenueId { get; set; } // working as a foreign key
     public virtual Venue Venue { get; set; } = null!;
     public Guid ArtistId { get; set; } // working as a foreign key
