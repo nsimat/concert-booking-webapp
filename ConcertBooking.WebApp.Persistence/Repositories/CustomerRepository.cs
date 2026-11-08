@@ -8,4 +8,9 @@ public class CustomerRepository : BaseRepository<Customer>, ICustomerRepository
     public CustomerRepository(ConcertBookingDbContext dbContext) : base(dbContext)
     {
     }
+
+    public async Task<Customer?> GetByApplicationUserIdAsync(Guid applicationUserId, CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
+    }
 }
