@@ -1,14 +1,12 @@
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using ConcertBooking.WebApp.Domain.Common;
 using ConcertBooking.WebApp.Domain.Enums;
 
 namespace ConcertBooking.WebApp.Domain.Entities;
 
-// A Venue: (1) ------> (*)(Concert)
+// A Venue:   (1) ------> (*)(Concert)
 // An Artist: (1) ------> (*)(Concert)
-// A Concert: (1) -----> (*)(Booking)
-// A Ticket: (1) -----> (1)(Concert)
+// A Concert: (1) ------> (*)(Booking)
+// A Ticket:  (1) ------> (1)(Concert)
 public class Concert : AuditableEntity // Event
 {
     public string Title { get; set; } = string.Empty;// Name
