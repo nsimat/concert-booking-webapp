@@ -8,6 +8,8 @@ public static class StartupExtensions
 {
     public static WebApplicationBuilder ConfigureServices(this WebApplicationBuilder builder)
     {
+        builder.Services.AddSingleton(TimeProvider.System);
+        builder.Services.AddProblemDetails();
         builder.Services.AddApplicationServices();
         builder.Services.AddInfrastructureServices();
         builder.Services.AddPersistenceServices(builder.Configuration);
