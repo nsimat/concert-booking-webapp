@@ -1,6 +1,4 @@
-using ConcertBooking.WebApp.Domain.Common;
-
-namespace ConcertBooking.WebApp.Application.Common;
+namespace ConcertBooking.WebApp.Domain.Common;
 
 /// <summary>
 /// Represents the result of an operation, encapsulating both success and failure outcomes.
@@ -13,10 +11,10 @@ public class Result
 
     private Result(bool isSuccess, Error error)
     {
-        if(isSuccess && error is not null)
+        if(isSuccess && error != Error.None)
             throw new InvalidOperationException("A successful result cannot have an error!");
         
-        if(!isSuccess && error is null)
+        if(!isSuccess && error == Error.None)
             throw new InvalidOperationException("A failed result must have an error!");
 
         IsSuccess = isSuccess;
@@ -76,6 +74,9 @@ public class Result
     {
         return Failure(Error.Exception);
     }
+    
+    public TOut Match<TOut>(Func<TOut> onSuccess, Func<Error, TOut> onFailure)
+        => IsSuccess ? onSuccess() : onFailure(Error);
 }
 
 /// <summary>
