@@ -1,13 +1,10 @@
-using ConcertBooking.WebApp.Domain.Enums;
+using ConcertBooking.WebApp.Domain.Common;
 using MediatR;
 
 namespace ConcertBooking.WebApp.Application.Features.Bookings.Commands.UpdateBooking;
 
-public class UpdateBookingCommand : IRequest<Unit>
+public class UpdateBookingCommand : IRequest<Result<Unit>>
 {
-    public Guid Id { get; set; }
-    public DateTime BookingDate { get; set; }
-    public BookingStatus Status { get; set; }
-    public Guid ConcertId { get; set; }
-    public Guid ApplicationUserId { get; set; }
+    public Guid BookingId { get; init; }
+    public Guid ConcertId { get; init; }
 }
