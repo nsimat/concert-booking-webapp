@@ -11,24 +11,27 @@ public sealed record Error(string Code, string Message, ErrorType Type = ErrorTy
 {
     internal static Error None => new(string.Empty, string.Empty);
     internal static Error Exception => new("Exception", "An error has occured (see. logs");
-    internal static Error Null => new Error("Error.Null", "Null value received!");
+    internal static Error Null => new("Error.Null", "Null value received!");
     
     public static Error NotFound(string code, string message) => new(code, message, ErrorType.NotFound);
     public static Error Validation(string code, string message) => new(code, message, ErrorType.Validation);
     public static Error Conflict(string code, string message) => new(code, message, ErrorType.Conflict);
     public static Error Failure(string code, string message) => new(code, message, ErrorType.Failure);
     public static Error Forbidden(string code, string message) => new(code, message, ErrorType.Forbidden);
+    public static Error Unauthorized(string code, string message) => new(code, message, ErrorType.Unauthorized);
+    public static Error PaymentRequired(string code, string message) => new(code, message, ErrorType.PaymentRequired);
+    public static Error InternalServerError(string code, string message) => new(code, message, ErrorType.InternalServerError);
     // others to implement
 }
 
 public enum ErrorType
 {
-    Failure,
-    Validation,
-    NotFound,
-    Conflict,
-    Unauthorized,
-    PaymentRequired,  
-    Forbidden,
-    InternalServerError
+    Failure = 0,
+    Validation = 1,
+    NotFound = 2,
+    Conflict = 3,
+    Unauthorized = 4,
+    PaymentRequired = 5,  
+    Forbidden = 6,
+    InternalServerError = 7
 }
