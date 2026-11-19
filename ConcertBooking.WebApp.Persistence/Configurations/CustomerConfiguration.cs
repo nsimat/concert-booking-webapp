@@ -4,10 +4,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace ConcertBooking.WebApp.Persistence.Configurations;
 
-public class CustomerConfiguration : IEntityTypeConfiguration<Customer> // Est-il nécessaire de créer une configuration pour Customer si on utilise IdentityUser? --- IGNORE ---
+public class CustomerConfiguration : IEntityTypeConfiguration<Customer> 
 {
     public void Configure(EntityTypeBuilder<Customer> entity)
     {
+        entity.Property(c => c.Id).ValueGeneratedNever(); // the ID comes from ApplicationUser entity
         entity.Property(c => c.FirstName)
             .IsRequired()
             .HasMaxLength(50);
@@ -22,13 +23,11 @@ public class CustomerConfiguration : IEntityTypeConfiguration<Customer> // Est-i
         
         entity.HasMany(c => c.Bookings)
             .WithOne(b => b.Customer)
-            .HasForeignKey(b => b.CustomerId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .HasForeignKey(b => b.CustomerId);
         
         entity.HasMany(c => c.Tickets)
             .WithOne(t => t.Customer)
-            .HasForeignKey(t => t.CustomerId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .HasForeignKey(t => t.CustomerId);
         
         // insert seed data with HasData()
     }
