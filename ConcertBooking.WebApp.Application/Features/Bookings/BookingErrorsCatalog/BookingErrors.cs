@@ -1,4 +1,5 @@
 using ConcertBooking.WebApp.Domain.Common;
+using ConcertBooking.WebApp.Domain.Enums;
 
 namespace ConcertBooking.WebApp.Application.Features.Bookings.BookingErrorsCatalog;
 
@@ -8,7 +9,7 @@ public static class BookingErrors
         Error.NotFound("Booking.NotFound", $"Booking with ID '{bookingId}' was not found.");
 
     public static Error NotAuthenticated =>
-        Error.Unauthorized("Booking.NotAuthenticated", "You must be signed in to book a concert.");
+        Error.Unauthorized("Booking.NotAuthenticated", "You must be signed in to perform this action.");
 
     public static Error CustomerNotFound =>
         Error.NotFound("Booking.CustomerNotFound", "No customer profile is associated with the current user.");
@@ -18,4 +19,7 @@ public static class BookingErrors
 
     public static Error ConcertAlreadyTookPlace(Guid concertId) =>
         Error.Conflict("Booking.ConcertAlreadyTookPlace", $"Concert with ID '{concertId}' has already taken place.");
+    
+    public static Error ConcertNotBookable(Guid concertId, ConcertStatus status) =>
+        Error.Conflict("Booking.ConcertNotBookable", $"Concert with ID '{concertId}' is not bookable because it is in status '{status}'.");
 }
