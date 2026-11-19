@@ -6,5 +6,6 @@ public enum BookingStatus
     PaymentFailed, // Payment processing failed
     Confirmed,     // Paid, Payment successfully processed
     Expired,       // Booking slot time expired 
-    Refunded       // Booking is refunded
+    Refunded,      // Booking is refunded
+    Canceled      // Booking is cancelled by the user
 }
