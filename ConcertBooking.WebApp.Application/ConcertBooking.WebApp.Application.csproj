@@ -25,8 +25,8 @@
       <Folder Include="Features\Concerts\Queries\" />
       <Folder Include="Features\Customers\Commands\" />
       <Folder Include="Features\Customers\Queries\" />
+      <Folder Include="Features\Identity\IdentityErrorscatalog\" />
       <Folder Include="Features\Identity\RefreshToken\" />
-      <Folder Include="Features\Identity\Register\" />
       <Folder Include="Features\Tickets\Commands\" />
       <Folder Include="Features\Tickets\Queries\" />
       <Folder Include="Features\Venues\Commands\" />
