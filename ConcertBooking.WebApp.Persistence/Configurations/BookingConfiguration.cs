@@ -17,18 +17,15 @@ public class BookingConfiguration : IEntityTypeConfiguration<Booking>
         
         entity.HasOne(b => b.Concert)
             .WithMany(b => b.Bookings)
-            .HasForeignKey(b => b.ConcertId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .HasForeignKey(b => b.ConcertId);
 
         entity.HasOne(b => b.Customer)
             .WithMany(a => a.Bookings)
-            .HasForeignKey(b => b.CustomerId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .HasForeignKey(b => b.CustomerId);
 
         entity.HasMany(b => b.Tickets)
             .WithOne(t => t.Booking)
-            .HasForeignKey(t => t.BookingId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .HasForeignKey(t => t.BookingId);
         
         // insert seed date with HasData()
     }
