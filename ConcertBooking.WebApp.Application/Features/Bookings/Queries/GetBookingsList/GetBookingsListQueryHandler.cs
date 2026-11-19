@@ -1,25 +1,34 @@
 using AutoMapper;
+using ConcertBooking.WebApp.Application.Contracts.Infrastructure.Identity;
 using ConcertBooking.WebApp.Application.Contracts.Persistence;
+using ConcertBooking.WebApp.Application.Features.Bookings.BookingErrorsCatalog;
 using ConcertBooking.WebApp.Domain.Common;
-using ConcertBooking.WebApp.Domain.Entities;
 using MediatR;
 
 namespace ConcertBooking.WebApp.Application.Features.Bookings.Queries.GetBookingsList;
 
-public class GetBookingsListQueryHandler : IRequestHandler<GetBookingsListQuery, Result<List<BookingListlVm>>>
+public sealed class GetBookingsListQueryHandler(
+    ICurrentUser currentUser, 
+    IBookingRepository bookingRepository, 
+    ICustomerRepository customerRepository,
+    IMapper mapper)
+    : IRequestHandler<GetBookingsListQuery, Result<List<BookingListVm>>>
 {
-    private readonly IAsyncRepository<Booking> _bookingRepository;
-    private readonly IMapper _mapper;
-
-    public GetBookingsListQueryHandler(IAsyncRepository<Booking> bookingRepository, IMapper mapper)
+    public async Task<Result<List<BookingListVm>>> Handle(GetBookingsListQuery request, CancellationToken cancellationToken)
     {
-        _bookingRepository = bookingRepository ?? throw new ArgumentNullException(nameof(bookingRepository));
-        _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-    }
-    public async Task<Result<List<BookingListlVm>>> Handle(GetBookingsListQuery request, CancellationToken cancellationToken)
-    {
-        var allBookings = (await _bookingRepository.GetAllAsync()).OrderBy(x => x.BookingDate);
+        // 1. Check if the current user is authenticated
+        if (!currentUser.IsAuthenticated || !Guid.TryParse(currentUser.UserId, out var applicationUserId))
+            return BookingErrors.NotAuthenticated;
         
-        return Result<List<BookingListlVm>>.Success(_mapper.Map<List<BookingListlVm>>(allBookings));
+        var customer = await customerRepository.GetByApplicationUserIdAsync(applicationUserId, cancellationToken);
+        if (customer is null)
+            return BookingErrors.CustomerNotFound;
+        
+        // 2. Only bookings related to the customer are retrieved
+        var allBookings = await bookingRepository.GetByCustomerIdAsync(customer.Id, cancellationToken);
+        
+        // 3. returns the list of customer's bookings
+        return mapper.Map<List<BookingListVm>>(allBookings);
+        //return Result<List<BookingListVm>>.Success(mapper.Map<List<BookingListVm>>(allBookings));
     }
 }

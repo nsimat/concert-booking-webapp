@@ -1,45 +1,38 @@
 using AutoMapper;
-using ConcertBooking.WebApp.Application.Common;
+using ConcertBooking.WebApp.Application.Contracts.Infrastructure.Identity;
 using ConcertBooking.WebApp.Application.Contracts.Persistence;
-using ConcertBooking.WebApp.Application.DTOs;
+using ConcertBooking.WebApp.Application.Features.Bookings.BookingErrorsCatalog;
 using ConcertBooking.WebApp.Domain.Common;
-using ConcertBooking.WebApp.Domain.Entities;
 using MediatR;
 
 namespace ConcertBooking.WebApp.Application.Features.Bookings.Queries.GetBookingDetails;
 
-public class GetBookingDetailQueryHandler : IRequestHandler<GetBookingDetailQuery, Result<BookingDetailVm>>
+public class GetBookingDetailQueryHandler(
+    IBookingRepository bookingRepository,
+    ICustomerRepository customerRepository,
+    ICurrentUser currentUser,
+    IMapper mapper)
+    : IRequestHandler<GetBookingDetailQuery, Result<BookingDetailVm>>
 {
-    private readonly IAsyncRepository<Booking> _bookingRepository;
-    private readonly IAsyncRepository<Concert> _concertRepository;
-    private readonly IAsyncRepository<Customer> _customerRepository;
-    private readonly IMapper _mapper;
-
-    public GetBookingDetailQueryHandler(
-        IAsyncRepository<Booking> bookingRepository, 
-        IAsyncRepository<Concert> concertRepository,
-        IAsyncRepository<Customer> customerRepository,
-        IMapper mapper)
-    {
-        _bookingRepository = bookingRepository ?? throw new ArgumentNullException(nameof(bookingRepository));
-        _concertRepository = concertRepository ?? throw new ArgumentNullException(nameof(concertRepository));
-        _customerRepository = customerRepository ?? throw new ArgumentNullException(nameof(customerRepository));
-        _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-    }
     public async Task<Result<BookingDetailVm>> Handle(GetBookingDetailQuery request, CancellationToken cancellationToken)
     {
-        var booking = await _bookingRepository.GetByIdAsync(request.Id);
-        var bookingDetailDto = _mapper.Map<BookingDetailVm>(booking);
-
-        if (booking is null)
-            return Result<BookingDetailVm>.Failure(Error.NotFound("Booking.NotFound",$"Booking with ID '{request.Id} not found!'"));
-
-        var concert = await _concertRepository.GetByIdAsync(booking.ConcertId);
-        var customer = await _customerRepository.GetByIdAsync(booking.CustomerId);
-
-        //bookingDetailDto.Concert = _mapper.Map<ConcertDto>(concert);
-        //bookingDetailDto.Customer = _mapper.Map<CustomerDto>(customer);
-
-        return Result<BookingDetailVm>.Success(bookingDetailDto);// à revoir
+        // 1. Check if the current user is authenticated
+        if (!currentUser.IsAuthenticated || !Guid.TryParse(currentUser.UserId, out var applicationUserId))
+            return BookingErrors.NotAuthenticated;
+        
+        // 2. Check if the authenticated user is authorized 
+        var customer = await customerRepository.GetByApplicationUserIdAsync(applicationUserId, cancellationToken);
+        if (customer is null)
+            return BookingErrors.CustomerNotFound;
+        
+        // 3. Retrieve the requested booking
+        var booking = await bookingRepository.GetByIdWithDetailsAsync(request.Id, cancellationToken);
+        if (booking is null || booking.CustomerId != customer.Id)
+            return BookingErrors.BookingNotFound(request.Id);
+        
+        // 4. Map the booking details to the ViewModel and return the result
+        var bookingDetailDto = mapper.Map<BookingDetailVm>(booking); 
+        return bookingDetailDto; // Concert -> ConcertDto, Customer -> UserDto mapped via the profile
+        //return Result<BookingDetailVm>.Success(bookingDetailDto);// à revoir
     }
 }
