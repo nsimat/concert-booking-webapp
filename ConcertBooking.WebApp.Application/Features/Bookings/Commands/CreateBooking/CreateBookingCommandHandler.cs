@@ -1,5 +1,3 @@
-using AutoMapper;
-using ConcertBooking.WebApp.Application.Common;
 using ConcertBooking.WebApp.Application.Contracts.Infrastructure.Identity;
 using ConcertBooking.WebApp.Application.Contracts.Infrastructure.Messaging;
 using ConcertBooking.WebApp.Application.Contracts.Persistence;
@@ -40,6 +38,9 @@ public sealed class CreateBookingCommandHandler(
         if (concert is null)
             return BookingErrors.ConcertNotFound(request.ConcertId);
         
+        if(concert.Status != ConcertStatus.Scheduled)
+            return BookingErrors.ConcertNotBookable(concert.Id, concert.Status);
+
         var now = timeProvider.GetUtcNow();
         if (concert.DateTime <= now)
             return BookingErrors.ConcertAlreadyTookPlace(concert.Id);
@@ -52,10 +53,9 @@ public sealed class CreateBookingCommandHandler(
             BookedAt = now,
             Status = BookingStatus.Pending
         };
-        
         booking = await bookingRepository.AddAsync(booking, cancellationToken);
         
-        // 4. Notification (using the principe of best effort: an email failuremust not fail the booking creation)
+        // 4. Notification (using the principe of best effort: an email failure must not fail the booking creation)
         await NotifyCustomerAsync(customer, booking, cancellationToken);
         
         // 5. Success: return the ID of the newly created booking
