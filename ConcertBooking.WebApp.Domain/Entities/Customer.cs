@@ -1,20 +1,27 @@
-using System.Collections;
 using ConcertBooking.WebApp.Domain.Common;
 
 namespace ConcertBooking.WebApp.Domain.Entities;
 
 // One-to-many relationship with Booking: A customer (1) -----> (*) Bookings
-public class Customer : AuditableEntity
+public sealed class Customer : AuditableEntity
 {
-    public string FirstName { get; set; } = string.Empty;
-    public string LastName { get; set; } = string.Empty;
-    public string Email { get; set; } = string.Empty;
-    public string? PhoneNumber { get; set; }
+    public string FirstName { get; private set; } = null!;
+    public string LastName { get; private set; } = null!;
+    public string Email { get; private set; } = null!;
+    public string? PhoneNumber { get; private set; } = string.Empty;
 
-    public Guid ApplicationUserId { get; set; } // lien vers la sécurité de l'application (IdentityUser)
-    public virtual ApplicationUser? ApplicationUser { get; set; } // Comment connaître l'ApplicationUser associé au Customer alors que ApplicationUser, qui est dans le projet Infrastructure, n'a pas de référence vers Customer ? (réflexion sur la conception de l'architecture) --> ApplicationUser se trouve dans le projet ConcertBooking.WebApp.Persistence, donc il n'est pas directement accessible depuis le projet ConcertBooking.WebApp.Domain. Il faudrait envisager de créer une interface ou un service pour gérer cette relation, ou bien repenser la structure des projets pour permettre un accès plus direct aux entités nécessaires.
+    private Customer() { } // EF Core knows how to deal with
+
+    public Customer(Guid applicationUserId, string firstName, string lastName, string email, string? phoneNumber)
+    {
+        Id = applicationUserId; // the same Guid ID than the ApplicationUser entity  
+        FirstName = firstName;
+        LastName = lastName;
+        Email = email;
+        PhoneNumber = phoneNumber;
+    }
     
     // propriétés métier 
-    public virtual ICollection<Booking> Bookings { get; set; } = new HashSet<Booking>();
-    public virtual ICollection<Ticket> Tickets { get; set; } = new HashSet<Ticket>();
+    public ICollection<Booking> Bookings { get; private set; } = new HashSet<Booking>();
+    public ICollection<Ticket> Tickets { get; private set; } = new HashSet<Ticket>();
 }
