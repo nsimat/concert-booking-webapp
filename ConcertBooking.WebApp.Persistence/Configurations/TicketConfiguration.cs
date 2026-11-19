@@ -29,13 +29,11 @@ public class TicketConfiguration : IEntityTypeConfiguration<Ticket>
 
         entity.HasOne(t => t.Concert)
             .WithMany(c => c.Tickets)
-            .HasForeignKey(t => t.ConcertId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .HasForeignKey(t => t.ConcertId);
         
         entity.HasOne(t => t.Customer)
             .WithMany(c => c.Tickets)
-            .HasForeignKey(t => t.CustomerId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .HasForeignKey(t => t.CustomerId);
         
         // insert seed data with HasData()
     }
