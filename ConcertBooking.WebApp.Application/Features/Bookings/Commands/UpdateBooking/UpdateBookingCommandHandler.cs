@@ -2,6 +2,7 @@ using ConcertBooking.WebApp.Application.Contracts.Infrastructure.Identity;
 using ConcertBooking.WebApp.Application.Contracts.Persistence;
 using ConcertBooking.WebApp.Application.Features.Bookings.BookingErrorsCatalog;
 using ConcertBooking.WebApp.Domain.Common;
+using ConcertBooking.WebApp.Domain.Enums;
 using MediatR;
 
 namespace ConcertBooking.WebApp.Application.Features.Bookings.Commands.UpdateBooking;
@@ -27,25 +28,24 @@ public class UpdateBookingCommandHandler(
             return BookingErrors.CustomerNotFound;
         
         // 2. Check the Business rules: Check if the booking exists and belongs to the authenticated customer
-        var bookingToUpdate = await bookingRepository.GetByIdAsync(request.BookingId, cancellationToken);
-        if (bookingToUpdate is null)
+        var bookingToUpdate = await bookingRepository.GetByIdWithTicketsAsync(request.BookingId, cancellationToken);
+        if (bookingToUpdate is null || bookingToUpdate.CustomerId != customer.Id)
                 return BookingErrors.BookingNotFound(request.BookingId);
-        
-        if (bookingToUpdate.CustomerId != customer.Id)
-            return BookingErrors.BookingNotFound(request.BookingId);
         
         // 3. Check the Business rules: Ensure the concert exists and is not in the past
         var concert = await concertRepository.GetByIdAsync(request.ConcertId, cancellationToken);
         if (concert is null)
             return BookingErrors.ConcertNotFound(request.ConcertId);
         
-        var now = timeProvider.GetUtcNow();
-        if (concert.DateTime <= now)
-            return BookingErrors.ConcertAlreadyTookPlace(concert.Id);
+        if (concert.Status is ConcertStatus.Canceled or ConcertStatus.SoldOut)
+            return BookingErrors.ConcertNotBookable(concert.Id, concert.Status);
+        
+        // Status, date and ticket rules are enforced by the aggregate
+        var result = bookingToUpdate.ChangeConcert(concert.Id, concert.DateTime, timeProvider.GetUtcNow());
+        if (result.IsFailure)
+            return result.Error;
         
         // 4. Update the booking and save changes to the database
-        bookingToUpdate.ConcertId = request.ConcertId;
-        
         await bookingRepository.UpdateAsync(bookingToUpdate, cancellationToken);
 
         // 5. Success: return a successful result
