@@ -1,5 +1,6 @@
 using ConcertBooking.WebApp.Api.Contracts.Bookings;
 using ConcertBooking.WebApp.Api.Utilities;
+using ConcertBooking.WebApp.Application.Features.Bookings.Commands.CancelBooking;
 using ConcertBooking.WebApp.Application.Features.Bookings.Commands.CreateBooking;
 using ConcertBooking.WebApp.Application.Features.Bookings.Commands.DeleteBooking;
 using ConcertBooking.WebApp.Application.Features.Bookings.Queries.GetBookingDetails;
@@ -8,12 +9,13 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ConcertBooking.WebApp.Api.Controllers;
+
 //[Authorize]
 [Route("api/[controller]")]
 [ApiController]
 public class BookingsController(IMediator mediator) : ControllerBase
 {
-    [HttpGet("all")]
+    [HttpGet]
     public async Task<IActionResult> GetAllBookings(CancellationToken cancellationToken)
     {
         var getBookingsListQuery = new GetBookingsListQuery();
@@ -32,7 +34,7 @@ public class BookingsController(IMediator mediator) : ControllerBase
         return this.FromResult(result, Ok);
     }
 
-    [HttpPost("create")]
+    [HttpPost]
     public async Task<IActionResult> CreateBooking(
         [FromBody] CreateBookingRequest request, 
         CancellationToken cancellationToken)
@@ -63,6 +65,12 @@ public class BookingsController(IMediator mediator) : ControllerBase
     [HttpDelete("{bookingId:guid}")]
     public async Task<IActionResult> DeleteBooking(Guid bookingId, CancellationToken cancellationToken){
         var result = await mediator.Send(new DeleteBookingCommand { Id = bookingId }, cancellationToken);
+        return this.FromResult(result, _ => NoContent());
+    }
+    
+    [HttpPost("{bookingId:guid}/cancel")]
+    public async Task<IActionResult> CancelBooking(Guid bookingId, CancellationToken cancellationToken){
+        var result = await mediator.Send(new CancelBookingCommand (bookingId ), cancellationToken);
         return this.FromResult(result, _ => NoContent());
     }
 }
