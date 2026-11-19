@@ -28,6 +28,9 @@ public static class BookingDomainErrors
     /// <returns>An error describing the validation failure.</returns>
     public static Error NoTickets =>
         Error.Validation("Booking.NoTickets", "A booking cannot be confirmed without at least one ticket.");
+    
+    public static Error InvalidPrice =>
+        Error.Validation($"Booking.InvalidPrice", $"The price of the ticket must be greater than zero.");
 
     /// <summary>
     /// Gets a conflict error indicating that the payment window for the booking has elapsed.
@@ -49,4 +52,11 @@ public static class BookingDomainErrors
     /// <returns>An error describing the restriction.</returns>
     public static Error HasTickets =>
         Error.Conflict("Booking.HasTickets", "Cannot change the concert of a booking that already has tickets.");
+    
+    public static Error ConcertInThePast =>
+        Error.Conflict("Booking.ConcertInThePast", "Cannot move a booking to a concert that has already taken place.");
+    
+    public static Error SeatAlreadyAdded(string seatNumber) =>
+        Error.Conflict($"Booking.SeatAlreadyAdded", $"Seat {seatNumber} is already occupied.");
+    
 }
