@@ -20,8 +20,7 @@ public class VenueConfiguration : IEntityTypeConfiguration<Venue>
 
         entity.HasMany(v => v.Concerts)
             .WithOne(c => c.Venue)
-            .HasForeignKey(c => c.VenueId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .HasForeignKey(c => c.VenueId);
         
         // insert seed data with HasData();
     }
