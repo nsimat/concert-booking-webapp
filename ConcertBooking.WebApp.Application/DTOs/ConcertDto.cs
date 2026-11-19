@@ -9,11 +9,8 @@ public class ConcertDto
     public string? Description { get; set; } = string.Empty;
     public string? ImageUrl { get; set; } = string.Empty;
     public ConcertStatus Status { get; set; }
-    public DateTime DateTime { get; set; }
+    public DateTimeOffset DateTime { get; set; }
     
     public Guid VenueId { get; set; }
-    public VenueDto? Venue { get; set; }
-    
     public Guid ArtistId { get; set; } 
-    public ArtistDto? Artist { get; set; }
 }
