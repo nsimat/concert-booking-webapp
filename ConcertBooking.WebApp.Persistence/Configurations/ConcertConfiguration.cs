@@ -24,23 +24,19 @@ public class ConcertConfiguration : IEntityTypeConfiguration<Concert>
 
         entity.HasOne(c => c.Venue)
             .WithMany(v => v.Concerts)
-            .HasForeignKey(c => c.VenueId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .HasForeignKey(c => c.VenueId);
 
         entity.HasOne(c => c.Artist)
             .WithMany(a => a.Concerts)
-            .HasForeignKey(c => c.ArtistId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .HasForeignKey(c => c.ArtistId);
 
         entity.HasMany(c => c.Bookings)
             .WithOne(b => b.Concert)
-            .HasForeignKey(b => b.ConcertId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .HasForeignKey(b => b.ConcertId);
         
         entity.HasMany(c => c.Tickets)
             .WithOne(t => t.Concert)
-            .HasForeignKey(t => t.ConcertId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .HasForeignKey(t => t.ConcertId);
         
         // insert seed data with HasData()
     }
