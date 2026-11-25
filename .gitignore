@@ -503,11 +503,6 @@ Desktop.ini
 *.sqlite
 *.sqlite3
 
-# Fichiers SQL Server LocalDB
-*.mdf
-*.ldf
-*.ndf
-
 # Scripts SQL générés temporairement (ex: dotnet ef migrations script)
 *migration*.sql
 
