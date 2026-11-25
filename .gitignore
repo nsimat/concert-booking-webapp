@@ -411,6 +411,7 @@ FodyWeavers.xsd
 *.sln.iml
 .idea/
 
+
 ##
 ## Visual studio for Mac
 ##
@@ -418,7 +419,7 @@ FodyWeavers.xsd
 
 # globs
 Makefile.in
-*.userprefs
+# *.userprefs
 *.usertasks
 config.make
 config.status
@@ -485,3 +486,31 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+
+## Fichiers temporaires et caches .NET / NuGet
+*.cache
+**/packages/*
+!**/packages/build/
+
+## Fichiers système (Windows / macOS)
+Desktop.ini
+
+## Entity Framework & Bases de données locales
+# Bases de données SQLite locales (développement / tests)
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+
+# Fichiers SQL Server LocalDB
+*.mdf
+*.ldf
+*.ndf
+
+# Scripts SQL générés temporairement (ex: dotnet ef migrations script)
+*migration*.sql
+
+## Configuration locale sensible
+appsettings.Development.json
+appsettings.Local.json
